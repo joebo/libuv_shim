@@ -1,0 +1,23 @@
+CC ?= gcc
+
+CFLAGS += -Wall \
+          -Wextra \
+          -Wno-unused-parameter \
+          -Ilibuv/include \
+          -shared \
+          -DWIN32_LEAN_AND_MEAN \
+          -D_WIN32_WINNT=0x0600
+
+OBJS = libuv_shim.o
+
+all: libuv_shim.dll
+
+clean:
+	-$(RM) $(OBJS) libuv_shiim.dll
+
+libuv_shim.dll: $(OBJS)
+	gcc -g -s -shared -o libuv_shim.dll $^ libuv/libuv.a -ladvapi32 -liphlpapi -lpsapi -lshell32 -lws2_32
+
+$(OBJS): %.o : %.c $(INCLUDES)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
